@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code & COWORK — Guía Interactiva</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #1a1d27;
+  --bg3: #252838;
+  --border: #2e3250;
+  --accent: #6c63ff;
+  --accent2: #00d4aa;
+  --accent3: #f0c040;
+  --danger: #ff5f5f;
+  --success: #4ade80;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --sidebar-w: 270px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;min-height:100vh;font-size:15px;line-height:1.7}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto}
+#sidebar-header{padding:20px 16px 14px;border-bottom:1px solid var(--border)}
+#sidebar-header h1{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.05em;text-transform:uppercase}
+#sidebar-header p{font-size:11px;color:var(--text2);margin-top:3px}
+#progress-overview{padding:12px 16px;border-bottom:1px solid var(--border)}
+#progress-bar-wrap{background:var(--bg3);border-radius:99px;height:6px;overflow:hidden;margin-top:6px}
+#progress-bar{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;width:0%;transition:width .4s}
+#progress-label{font-size:11px;color:var(--text2);margin-top:4px}
+#nav-list{list-style:none;padding:8px 0;flex:1}
+#nav-list li a{display:flex;align-items:center;gap:10px;padding:9px 16px;color:var(--text2);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .15s;cursor:pointer}
+#nav-list li a:hover{background:var(--bg3);color:var(--text);border-left-color:var(--border)}
+#nav-list li a.active{background:var(--bg3);color:var(--text);border-left-color:var(--accent)}
+#nav-list li a .badge{margin-left:auto;font-size:10px;padding:2px 7px;border-radius:99px;background:var(--bg);font-weight:600}
+#nav-list li a .badge.done{background:var(--success);color:#000}
+#nav-list li a .badge.todo{background:var(--bg3);color:var(--text2)}
+.nav-section-label{padding:10px 16px 4px;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em}
+#burger{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--accent);border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:18px;cursor:pointer;align-items:center;justify-content:center}
+
+/* MAIN */
+#main{margin-left:var(--sidebar-w);flex:1;padding:0 0 80px}
+.section{display:none;max-width:860px;margin:0 auto;padding:40px 40px}
+.section.active{display:block}
+
+/* TYPOGRAPHY */
+h1.page-title{font-size:28px;font-weight:800;margin-bottom:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-meta{font-size:13px;color:var(--text2);margin-bottom:28px;display:flex;gap:16px;flex-wrap:wrap}
+.page-meta span{display:flex;align-items:center;gap:5px}
+h2{font-size:20px;font-weight:700;margin:36px 0 12px;color:var(--text);padding-bottom:6px;border-bottom:1px solid var(--border)}
+h2:first-of-type{margin-top:0}
+h3{font-size:16px;font-weight:600;margin:24px 0 8px;color:var(--accent2)}
+p{margin-bottom:12px;color:var(--text)}
+ul,ol{margin:8px 0 14px 22px}
+li{margin-bottom:4px}
+code{background:var(--bg3);padding:2px 7px;border-radius:5px;font-family:'Cascadia Code','Fira Code',monospace;font-size:13px;color:var(--accent2)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* CODE BLOCKS */
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;overflow-x:auto;margin:14px 0;font-family:'Cascadia Code','Fira Code',monospace;font-size:13px;line-height:1.6;color:#c9d1d9}
+pre .kw{color:#ff79c6}pre .str{color:#f1fa8c}pre .cm{color:#6272a4}pre .fn{color:var(--accent2)}pre .num{color:#bd93f9}
+
+/* DIAGRAM BOX */
+.diagram{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:16px 0;font-family:'Cascadia Code','Fira Code',monospace;font-size:12.5px;line-height:1.7;overflow-x:auto;white-space:pre;color:#c9d1d9}
+
+/* INFO BOXES */
+.box{border-radius:10px;padding:14px 18px;margin:14px 0;border-left:4px solid}
+.box-info{background:#1e2a3a;border-color:var(--accent)}
+.box-tip{background:#1a2e26;border-color:var(--accent2)}
+.box-warn{background:#2e2214;border-color:var(--accent3)}
+.box-danger{background:#2e1a1a;border-color:var(--danger)}
+.box strong{display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.8}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-weight:600;color:var(--text2);font-size:12px;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid var(--border)}
+td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:var(--bg2)}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.tag-red{background:#3d1515;color:#ff5f5f}
+.tag-green{background:#153d25;color:#4ade80}
+.tag-yellow{background:#3d3015;color:#f0c040}
+.tag-blue{background:#151d3d;color:#6c63ff}
+
+/* FLOW DIAGRAM (visual) */
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:16px 0}
+.flow-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500;white-space:nowrap}
+.flow-box.accent{border-color:var(--accent);color:var(--accent)}
+.flow-box.green{border-color:var(--accent2);color:var(--accent2)}
+.flow-arrow{color:var(--text2);font-size:18px}
+.flow-down{display:flex;flex-direction:column;align-items:center;gap:6px;margin:10px 0}
+.flow-down .flow-arrow{transform:rotate(90deg)}
+
+/* QUIZ */
+.quiz-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-top:36px}
+.quiz-wrap h2{border:none;margin-top:0;font-size:18px;color:var(--accent)}
+.quiz-intro{font-size:13px;color:var(--text2);margin-bottom:20px}
+.q-block{margin-bottom:28px}
+.q-text{font-weight:600;margin-bottom:12px;font-size:15px}
+.q-num{color:var(--accent2);margin-right:6px}
+.options{display:flex;flex-direction:column;gap:8px}
+.opt-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:11px 16px;text-align:left;color:var(--text);font-size:14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
+.opt-btn:hover:not(:disabled){background:var(--bg);border-color:var(--accent);color:var(--accent)}
+.opt-btn.correct{background:#153d25;border-color:var(--success);color:var(--success)}
+.opt-btn.wrong{background:#3d1515;border-color:var(--danger);color:var(--danger)}
+.opt-btn:disabled{cursor:default}
+.opt-icon{font-size:16px;min-width:20px}
+.explanation{margin-top:10px;padding:12px 16px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent2);font-size:13.5px;display:none}
+.explanation.show{display:block}
+.quiz-result{text-align:center;padding:24px;border-top:1px solid var(--border);margin-top:8px;display:none}
+.quiz-result.show{display:block}
+.score-circle{width:90px;height:90px;border-radius:50%;border:5px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:28px;font-weight:800}
+.score-circle.pass{border-color:var(--success);color:var(--success)}
+.score-circle.fail{border-color:var(--danger);color:var(--danger)}
+.quiz-submit-btn{background:var(--accent);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;transition:opacity .2s}
+.quiz-submit-btn:hover{opacity:.85}
+.quiz-submit-btn:disabled{opacity:.4;cursor:default}
+.next-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent2);color:#000;padding:11px 24px;border-radius:8px;font-weight:700;font-size:14px;border:none;cursor:pointer;text-decoration:none;margin-top:12px}
+.next-btn:hover{opacity:.85;text-decoration:none}
+
+/* GRID CARDS */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:18px 0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:all .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card .card-icon{font-size:28px;margin-bottom:10px}
+.card h3{margin:0 0 6px;font-size:15px;color:var(--text)}
+.card p{font-size:12px;color:var(--text2);margin:0}
+.card .card-status{margin-top:10px;font-size:11px;font-weight:600}
+.card .card-status.done{color:var(--success)}
+.card .card-status.locked{color:var(--text2)}
+
+/* HOME COURSE MAP */
+.course-map{display:flex;flex-direction:column;gap:0;margin:24px 0}
+.map-item{display:flex;align-items:stretch;gap:0}
+.map-line{display:flex;flex-direction:column;align-items:center;width:40px;min-width:40px}
+.map-dot{width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);flex-shrink:0;margin-top:22px}
+.map-dot.done{background:var(--success)}
+.map-dot.current{background:var(--accent3);box-shadow:0 0 0 4px rgba(240,192,64,.2)}
+.map-connector{flex:1;width:2px;background:var(--border);margin:0 auto}
+.map-card{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:6px 0;cursor:pointer;transition:all .15s}
+.map-card:hover{border-color:var(--accent)}
+.map-card .mc-num{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.map-card .mc-title{font-size:15px;font-weight:700;margin:2px 0}
+.map-card .mc-desc{font-size:12px;color:var(--text2)}
+
+/* CHEATSHEET GRID */
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+@media(max-width:700px){.cheat-grid{grid-template-columns:1fr}}
+.cheat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.cheat-card h3{margin:0 0 10px;font-size:13px;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em}
+.cheat-card pre{background:var(--bg);margin:0;padding:12px;font-size:12px;border:none}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%);transition:transform .3s}
+  #sidebar.open{transform:translateX(0)}
+  #burger{display:flex}
+  #main{margin-left:0}
+  .section{padding:60px 20px 40px}
+  .cheat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<button id="burger" onclick="toggleSidebar()">☰</button>
+
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <h1>Claude Code &amp; COWORK</h1>
+    <p>Guía Interactiva — Nivel Principiante</p>
+  </div>
+  <div id="progress-overview">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--text2)">Tu progreso</span>
+      <span id="modules-done" style="font-size:12px;color:var(--accent2);font-weight:700">0/6</span>
+    </div>
+    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+    <div id="progress-label">Empieza con el Módulo 0</div>
+  </div>
+  <ul id="nav-list">
+    <li class="nav-section-label">Inicio</li>
+    <li><a onclick="showSection('home')" class="active">🏠 <span>Inicio</span></a></li>
+    <li class="nav-section-label">Módulos</li>
+    <li><a onclick="showSection('m0')">🌐 <span>M0 — Introducción</span><span class="badge todo" id="b-m0">Quiz</span></a></li>
+    <li><a onclick="showSection('m1')">🚀 <span>M1 — Primeros Pasos</span><span class="badge todo" id="b-m1">Quiz</span></a></li>
+    <li><a onclick="showSection('m2')">⚙️ <span>M2 — Core</span><span class="badge todo" id="b-m2">Quiz</span></a></li>
+    <li><a onclick="showSection('m3')">🔧 <span>M3 — Avanzado</span><span class="badge todo" id="b-m3">Quiz</span></a></li>
+    <li><a onclick="showSection('m4')">🤖 <span>M4 — COWORK</span><span class="badge todo" id="b-m4">Quiz</span></a></li>
+    <li><a onclick="showSection('m5')">🏆 <span>M5 — Proyecto Final</span><span class="badge todo" id="b-m5">Final</span></a></li>
+    <li class="nav-section-label">Recursos</li>
+    <li><a onclick="showSection('glosario')">📖 <span>Glosario</span></a></li>
+    <li><a onclick="showSection('cheatsheet')">⚡ <span>Cheatsheet</span></a></li>
+  </ul>
+  <div style="padding:12px 16px;border-top:1px solid var(--border)">
+    <button onclick="resetProgress()" style="background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;width:100%">Reiniciar Progreso</button>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ==================== HOME ==================== -->
+<section id="home" class="section active">
+  <h1 class="page-title">Claude Code &amp; COWORK</h1>
+  <p class="page-meta">
+    <span>📚 6 módulos</span>
+    <span>🎯 6 autoevaluaciones</span>
+    <span>⏱ ~4 horas</span>
+    <span>🇪🇸 En español</span>
+  </p>
+  <div class="box box-tip"><strong>💡 Bienvenido</strong>Esta guía interactiva te enseña Claude Code y COWORK (colaboración multi-agente) desde cero. Completa cada módulo y pasa el quiz para desbloquear el siguiente.</div>
+
+  <h2>Ruta de Aprendizaje</h2>
+  <div class="course-map" id="course-map">
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot current" id="dot-m0"></div><div class="map-connector"></div></div>
+      <div class="map-card" onclick="showSection('m0')"><div class="mc-num">Módulo 0</div><div class="mc-title">Introducción al Ecosistema</div><div class="mc-desc">¿Qué es Claude Code? ¿Qué es COWORK? El gran panorama.</div></div>
+    </div>
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot" id="dot-m1"></div><div class="map-connector"></div></div>
+      <div class="map-card" onclick="showSection('m1')"><div class="mc-num">Módulo 1</div><div class="mc-title">Primeros Pasos</div><div class="mc-desc">Instalación, API Key, primera sesión y CLAUDE.md.</div></div>
+    </div>
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot" id="dot-m2"></div><div class="map-connector"></div></div>
+      <div class="map-card" onclick="showSection('m2')"><div class="mc-num">Módulo 2</div><div class="mc-title">Funcionalidades Core</div><div class="mc-desc">Leer, editar, generar código, debuggear y ejecutar.</div></div>
+    </div>
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot" id="dot-m3"></div><div class="map-connector"></div></div>
+      <div class="map-card" onclick="showSection('m3')"><div class="mc-num">Módulo 3</div><div class="mc-title">Características Avanzadas</div><div class="mc-desc">Hooks, Slash Commands, MCP Servers y Settings.</div></div>
+    </div>
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot" id="dot-m4"></div><div class="map-connector"></div></div>
+      <div class="map-card" onclick="showSection('m4')"><div class="mc-num">Módulo 4</div><div class="mc-title">COWORK Multi-Agente</div><div class="mc-desc">Orquestadores, sub-agentes, patrones paralelo/secuencial.</div></div>
+    </div>
+    <div class="map-item">
+      <div class="map-line"><div class="map-dot" id="dot-m5"></div></div>
+      <div class="map-card" onclick="showSection('m5')"><div class="mc-num">Módulo 5</div><div class="mc-title">Proyecto Final</div><div class="mc-desc">Code reviewer automático con COWORK. Aplica todo.</div></div>
+    </div>
+  </div>
+
+  <h2>Cómo Usar Esta Guía</h2>
+  <div class="flow">
+    <div class="flow-box accent">1. Lee la lección</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">2. Practica en tu terminal</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">3. Completa el quiz</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green">4. Siguiente módulo</div>
+  </div>
+  <div class="box box-warn"><strong>⚠️ Importante</strong>No saltes módulos. Cada uno construye sobre el anterior. El quiz de cada módulo registra tu progreso automáticamente en este navegador.</div>
+  <br>
+  <button class="next-btn" onclick="showSection('m0')">Empezar → Módulo 0</button>
+</section>
+
+<!-- ==================== MÓDULO 0 ==================== -->
+<section id="m0" class="section">
+  <h1 class="page-title">Módulo 0 — Introducción</h1>
+  <div class="page-meta"><span>⏱ 20 min</span><span>📊 Conceptual</span><span>🎯 Panorama general</span></div>
+
+  <h2>0.1 ¿Dónde estamos?</h2>
+  <p>Imagina un asistente de programación superinteligente que habla contigo en lenguaje natural, lee tu código, lo edita, lo ejecuta y busca errores. Eso es Claude Code.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+    <div class="box box-danger"><strong>Sin Claude Code</strong>Tú → Terminal<br>Tú → Editor<br>Tú → Buscador<br><em>Tú haces todo manualmente</em></div>
+    <div class="box box-tip"><strong>Con Claude Code</strong>Tú → Claude → Terminal<br>Tú → Claude → Editor<br>Tú → Claude → Internet<br><em>Claude hace el trabajo técnico</em></div>
+  </div>
+
+  <h2>0.2 El Ecosistema Completo</h2>
+  <div class="diagram">┌─────────────────────────────────────────────────────────┐
+│                      ANTHROPIC                          │
+│        Crea y entrena los modelos Claude (la IA)        │
+└─────────────────────────┬───────────────────────────────┘
+                          │
+                ┌─────────▼──────────┐
+                │   ANTHROPIC API    │
+                │  (puerta de acceso │
+                │    a Claude)       │
+                └─────────┬──────────┘
+                          │
+         ┌────────────────┼────────────────┐
+         │                │                │
+  ┌──────▼──────┐  ┌──────▼──────┐  ┌─────▼───────┐
+  │  Claude.ai  │  │ Claude Code │  │  Tu app con │
+  │  (web chat) │  │  (CLI/SDK)  │  │    la API   │
+  └─────────────┘  └──────┬──────┘  └─────────────┘
+                          │
+                 ┌────────▼────────┐
+                 │     COWORK      │
+                 │ (multi-agente)  │
+                 └─────────────────┘</div>
+
+  <table>
+    <tr><th>Nivel</th><th>Herramienta</th><th>¿Para quién?</th><th>¿Qué puedes hacer?</th></tr>
+    <tr><td>1</td><td><strong>Claude.ai</strong></td><td>Cualquier persona</td><td>Chatear con Claude en el navegador</td></tr>
+    <tr><td>2</td><td><strong>Claude Code</strong></td><td>Desarrolladores</td><td>Programar con IA asistida desde la terminal</td></tr>
+    <tr><td>3</td><td><strong>COWORK</strong></td><td>Avanzado</td><td>Orquestar equipos de agentes IA</td></tr>
+  </table>
+
+  <h2>0.3 ¿Qué es Claude Code?</h2>
+  <p>Claude Code es un <strong>CLI</strong> (programa de línea de comandos) que instalas en tu ordenador. Cuando lo abres, puedes:</p>
+  <ul>
+    <li>Hablar con Claude en lenguaje natural</li>
+    <li>Claude lee tu código automáticamente cuando se lo pides</li>
+    <li>Claude edita archivos directamente en tu proyecto</li>
+    <li>Claude ejecuta comandos en tu terminal</li>
+    <li>Claude busca en internet cuando lo necesita</li>
+  </ul>
+
+  <h2>0.4 ¿Qué es COWORK?</h2>
+  <p>COWORK es la capacidad de Claude de crear <strong>equipos de agentes</strong> que trabajan juntos — como tener un equipo de programadores IA, cada uno especializado.</p>
+
+  <div class="diagram">                       TÚ
+                        │
+                        ▼
+          ┌─────────────────────────┐
+          │    AGENTE PRINCIPAL     │
+          │      (Orquestador)      │
+          └───────────┬─────────────┘
+                      │
+         ┌────────────┼────────────┐
+         │            │            │
+         ▼            ▼            ▼
+   ┌──────────┐ ┌──────────┐ ┌──────────┐
+   │ Sub-Agente│ │Sub-Agente│ │Sub-Agente│
+   │  Explorar │ │Planificar│ │ Ejecutar │
+   └──────────┘ └──────────┘ └──────────┘
+         │            │            │
+         └────────────┼────────────┘
+                      ▼
+                Resultado final</div>
+
+  <table>
+    <tr><th>Situación</th><th>Sin COWORK</th><th>Con COWORK</th></tr>
+    <tr><td>Analizar 100 archivos</td><td>Claude lee uno a uno</td><td>Múltiples agentes en paralelo</td></tr>
+    <tr><td>Tarea muy larga</td><td>Un agente puede "olvidar" el inicio</td><td>Orquestador mantiene el hilo</td></tr>
+    <tr><td>Revisión de código</td><td>Una perspectiva</td><td>Perspectivas especializadas</td></tr>
+  </table>
+
+  <h2>0.5 Casos de Uso Reales</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="box box-info"><strong>Claude Code (1 agente)</strong>
+      • "Refactoriza esta función"<br>
+      • "Añade tests a este módulo"<br>
+      • "Explícame qué hace este código"<br>
+      • "Hay un bug, encuéntralo y arréglalo"
+    </div>
+    <div class="box box-tip"><strong>COWORK (multi-agente)</strong>
+      • "Informe completo de seguridad de la app"<br>
+      • "Migra el proyecto de JS a TypeScript"<br>
+      • "Implementa esta nueva feature grande"<br>
+      • "Analiza el rendimiento y optimiza"
+    </div>
+  </div>
+
+  <!-- QUIZ M0 -->
+  <div class="quiz-wrap" id="quiz-m0">
+    <h2>🎯 Autoevaluación — Módulo 0</h2>
+    <p class="quiz-intro">Selecciona la respuesta correcta para cada pregunta. Recibirás feedback inmediato.</p>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">1.</span> ¿Qué es Claude Code?</p>
+      <div class="options" data-correct="B" data-expl="Claude Code es un CLI (programa de línea de comandos) que instalas en tu ordenador para programar con IA asistida. No es una web, no es el modelo en sí, y aunque tiene funciones similares a un editor, es una herramienta de IA que interactúa con él.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Una página web para chatear con Claude</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Un programa de línea de comandos para programar con IA asistida</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Un modelo de IA creado por Anthropic</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Un editor de código como VS Code</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">2.</span> ¿Cuál es la diferencia principal entre Claude.ai y Claude Code?</p>
+      <div class="options" data-correct="B" data-expl="Claude.ai es para chatear desde el navegador para cualquier uso. Claude Code está diseñado específicamente para desarrollo: puede leer archivos, editar código, ejecutar comandos y mucho más.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Claude.ai es más inteligente que Claude Code</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Claude.ai es interfaz web general; Claude Code es CLI para desarrolladores</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Claude Code no necesita conexión a internet</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Son exactamente lo mismo, solo cambia el nombre</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">3.</span> ¿Qué significa COWORK en el contexto de Claude?</p>
+      <div class="options" data-correct="C" data-expl="COWORK describe el sistema multi-agente donde varios agentes especializados trabajan en paralelo o secuencia para completar tareas que serían demasiado grandes para un solo agente.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Una aplicación de videollamadas para equipos</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) El proceso de escribir código en colaboración con humanos</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Un sistema donde múltiples agentes de IA trabajan juntos para tareas complejas</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Una empresa filial de Anthropic</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">4.</span> En COWORK, ¿qué papel juega el "orquestador"?</p>
+      <div class="options" data-correct="B" data-expl="El orquestador recibe la tarea del usuario, la divide en sub-tareas, las asigna a sub-agentes apropiados, recoge sus resultados y produce la respuesta final. Es como el 'director de proyecto' del equipo de IA.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Es el agente más rápido del equipo</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Es el agente principal que divide tareas y coordina a los sub-agentes</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Es el agente que habla directamente con el usuario</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Es el servidor donde se ejecutan los otros agentes</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">5.</span> ¿Cuándo es más apropiado usar COWORK en lugar de un solo agente?</p>
+      <div class="options" data-correct="D" data-expl="COWORK brilla con tareas grandes que requieren paralelismo o especialización. Para tareas simples como refactorizar una función, un solo agente es más eficiente. COWORK tiene un coste de coordinación que solo vale la pena para trabajos complejos.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Siempre, porque es siempre más eficiente</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Nunca, porque es demasiado complejo de configurar</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Para tareas cotidianas simples como refactorizar una función</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Para tareas grandes que requieren paralelismo o especialización</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="quiz-result" id="result-m0">
+      <div class="score-circle" id="score-circle-m0">0/5</div>
+      <p id="score-msg-m0" style="font-size:15px;margin-bottom:8px"></p>
+      <button class="next-btn" onclick="showSection('m1')">Módulo 1 — Primeros Pasos →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MÓDULO 1 ==================== -->
+<section id="m1" class="section">
+  <h1 class="page-title">Módulo 1 — Primeros Pasos</h1>
+  <div class="page-meta"><span>⏱ 30 min</span><span>🛠 Práctico</span><span>🎯 Instalación y primer uso</span></div>
+
+  <h2>1.1 Requisitos del Sistema</h2>
+  <table>
+    <tr><th>Requisito</th><th>¿Necesario?</th><th>Notas</th></tr>
+    <tr><td>macOS 12+ / Linux / Windows 11 (WSL2)</td><td><span class="tag tag-green">Sí</span></td><td>Elige tu plataforma</td></tr>
+    <tr><td>Node.js v18+</td><td><span class="tag tag-red">Obligatorio</span></td><td>Ejecuta <code>node --version</code></td></tr>
+    <tr><td>npm v8+</td><td><span class="tag tag-red">Obligatorio</span></td><td>Viene con Node.js</td></tr>
+    <tr><td>Cuenta en console.anthropic.com</td><td><span class="tag tag-red">Obligatorio</span></td><td>Para obtener API Key</td></tr>
+    <tr><td>Git</td><td><span class="tag tag-yellow">Recomendado</span></td><td>Para el proyecto final</td></tr>
+  </table>
+
+  <h2>1.2 Instalación Paso a Paso</h2>
+  <div class="flow">
+    <div class="flow-box accent">1. Verificar Node.js</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">2. Instalar Claude Code</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box">3. Configurar API Key</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green">4. ¡Listo!</div>
+  </div>
+
+  <h3>Paso 1 — Verificar Node.js</h3>
+  <pre>node --version
+# Debe mostrar: v20.x.x o superior
+
+npm --version
+# Debe mostrar: v8.x.x o superior</pre>
+
+  <h3>Paso 2 — Instalar Claude Code</h3>
+  <pre>npm install -g @anthropic-ai/claude-code
+
+# Verificar que se instaló:
+claude --version</pre>
+
+  <h3>Paso 3 — Configurar la API Key</h3>
+  <pre># Añade esto a ~/.bashrc o ~/.zshrc
+export ANTHROPIC_API_KEY="sk-ant-tu-clave-aqui"
+
+# Recarga la terminal:
+source ~/.bashrc    # bash
+source ~/.zshrc     # zsh</pre>
+
+  <div class="box box-danger"><strong>⚠️ Seguridad</strong>Tu API Key es como tu contraseña de banco. Nunca la pongas en archivos de código que subirás a GitHub.</div>
+
+  <h2>1.3 Tu Primera Sesión</h2>
+  <pre># Inicia Claude Code en tu directorio de proyecto:
+cd /ruta/a/tu/proyecto
+claude</pre>
+
+  <p>Verás algo así:</p>
+  <div class="diagram">╔═══════════════════════════════════════╗
+║         Claude Code v1.x.x           ║
+║   Tips for getting started:           ║
+║   1. Ask Claude to create a file     ║
+║   2. Ask Claude to explain code      ║
+║   3. Type /help for commands         ║
+╚═══════════════════════════════════════╝
+
+&gt;</div>
+
+  <p>Prueba estas primeras conversaciones (de menos a más):</p>
+  <table>
+    <tr><th>#</th><th>Qué escribes</th><th>Qué hace Claude</th></tr>
+    <tr><td>1</td><td><code>Hola, ¿cuánto es 2+2?</code></td><td>Responde simplemente</td></tr>
+    <tr><td>2</td><td><code>Crea un archivo hola.txt con "¡Hola mundo!"</code></td><td>Usa Write para crear el archivo</td></tr>
+    <tr><td>3</td><td><code>Crea un hola.py que imprima la fecha actual</code></td><td>Genera código Python funcional</td></tr>
+    <tr><td>4</td><td><code>Ejecuta el archivo hola.py</code></td><td>Usa Bash para ejecutarlo</td></tr>
+  </table>
+
+  <h2>1.4 El Ciclo de Trabajo Básico</h2>
+  <div class="diagram">┌─────────────────────────────────────────────────────┐
+│             CICLO DE TRABAJO CON CLAUDE CODE        │
+│                                                     │
+│  1. Tú escribes   →  Claude entiende tu intención   │
+│                                                     │
+│  2. Claude planifica  →  Decide qué herramientas    │
+│                                                     │
+│  3. Claude ejecuta    →  Read, Edit, Bash, Write... │
+│                                                     │
+│  4. Claude informa    →  Te dice qué hizo           │
+│                                                     │
+│  5. Tú revisas        →  Apruebas o corriges        │
+│                                                     │
+│  6. Repite            →  Siguiente tarea            │
+└─────────────────────────────────────────────────────┘</div>
+
+  <h2>1.5 El Archivo CLAUDE.md</h2>
+  <p>Claude busca automáticamente <code>CLAUDE.md</code> en la raíz de tu proyecto. Es como las "instrucciones permanentes" para Claude.</p>
+  <pre># Crear CLAUDE.md automáticamente:
+&gt; /init
+
+# O créalo manualmente con contenido como:
+# Mi Proyecto
+## Descripción
+API REST en Python con Flask.
+## Comandos útiles
+- `python app.py` — iniciar servidor
+- `pytest` — ejecutar tests</pre>
+
+  <h2>1.6 Slash Commands Básicos</h2>
+  <table>
+    <tr><th>Comando</th><th>Qué hace</th><th>Cuándo usarlo</th></tr>
+    <tr><td><code>/help</code></td><td>Muestra ayuda</td><td>Cuando no recuerdas algo</td></tr>
+    <tr><td><code>/clear</code></td><td>Limpia la pantalla</td><td>Para tener más espacio</td></tr>
+    <tr><td><code>/compact</code></td><td>Comprime el historial</td><td>Sesiones largas o lentas</td></tr>
+    <tr><td><code>/status</code></td><td>Estado del modelo</td><td>Para verificar configuración</td></tr>
+    <tr><td><code>/init</code></td><td>Genera CLAUDE.md</td><td>Al empezar proyecto nuevo</td></tr>
+  </table>
+
+  <div class="box box-info"><strong>ℹ️ Para salir</strong><code>Ctrl+C</code> interrumpe la respuesta actual. <code>Ctrl+D</code> cierra Claude Code.</div>
+
+  <!-- QUIZ M1 -->
+  <div class="quiz-wrap" id="quiz-m1">
+    <h2>🎯 Autoevaluación — Módulo 1</h2>
+    <p class="quiz-intro">Demuestra que dominas la instalación y primeros pasos.</p>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">1.</span> ¿Cuál es el comando correcto para instalar Claude Code?</p>
+      <div class="options" data-correct="B" data-expl="Claude Code es un paquete npm. El flag -g lo instala globalmente, permitiendo usar el comando claude desde cualquier directorio del sistema.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) pip install claude-code</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) npm install -g @anthropic-ai/claude-code</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) brew install claude</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) apt-get install claude-code</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">2.</span> ¿Dónde debes guardar tu API Key?</p>
+      <div class="options" data-correct="B" data-expl="Las variables de entorno son la forma estándar y segura de pasar credenciales. Claude Code busca ANTHROPIC_API_KEY automáticamente. Nunca la pongas en archivos de texto plano en tu proyecto.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) En un archivo api_key.txt en tu proyecto</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Como variable de entorno: export ANTHROPIC_API_KEY="sk-ant-..."</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) En el archivo settings.json del proyecto</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) No es necesario, Claude Code la solicita cada vez</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">3.</span> ¿Para qué sirve CLAUDE.md?</p>
+      <div class="options" data-correct="C" data-expl="CLAUDE.md es leído automáticamente al iniciar Claude Code. Contiene información permanente del proyecto: cómo funciona, comandos, convenciones. Así no tienes que explicar lo mismo en cada sesión.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Para guardar las conversaciones con Claude</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Para almacenar la API Key de forma segura</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Para dar instrucciones permanentes y contexto del proyecto a Claude</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Es el archivo de configuración de instalación</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">4.</span> ¿Qué comando usas cuando Claude Code se vuelve lento (contexto lleno)?</p>
+      <div class="options" data-correct="C" data-expl="/compact comprime el historial de la conversación para liberar espacio en el contexto y permite continuar sin perder demasiado hilo. /clear solo limpia la pantalla visualmente.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) /clear</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) /reset</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) /compact</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) /status</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">5.</span> ¿Cuál es la forma correcta de interactuar con Claude Code?</p>
+      <div class="options" data-correct="B" data-expl="Claude Code acepta lenguaje natural. No necesitas aprender comandos especiales — simplemente describes lo que quieres como si le hablaras a una persona.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) --create-file --name=hola.py --content="print('hola')"</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Crea un archivo hola.py que imprima "Hola mundo"</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) python -m claude create hola.py</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) claude.create("hola.py", "print('hola')")</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="quiz-result" id="result-m1">
+      <div class="score-circle" id="score-circle-m1">0/5</div>
+      <p id="score-msg-m1" style="font-size:15px;margin-bottom:8px"></p>
+      <button class="next-btn" onclick="showSection('m2')">Módulo 2 — Core →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MÓDULO 2 ==================== -->
+<section id="m2" class="section">
+  <h1 class="page-title">Módulo 2 — Funcionalidades Core</h1>
+  <div class="page-meta"><span>⏱ 40 min</span><span>⚙️ Intermedio</span><span>🎯 Leer, editar, generar, debuggear</span></div>
+
+  <h2>2.1 Las Herramientas de Claude Code</h2>
+  <p>Claude no "escribe texto mágicamente". Usa <strong>herramientas concretas</strong> para interactuar con tu sistema.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+    <div>
+      <h3>Leer Información</h3>
+      <table><tr><th>Herramienta</th><th>Acción</th></tr>
+      <tr><td><code>Read</code></td><td>Lee el contenido de un archivo</td></tr>
+      <tr><td><code>Bash</code></td><td>Ejecuta comandos (ls, grep...)</td></tr>
+      <tr><td><code>WebSearch</code></td><td>Busca en internet</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>Modificar / Crear</h3>
+      <table><tr><th>Herramienta</th><th>Acción</th></tr>
+      <tr><td><code>Write</code></td><td>Crea o sobreescribe un archivo</td></tr>
+      <tr><td><code>Edit</code></td><td>Cambia partes específicas</td></tr>
+      <tr><td><code>Agent</code></td><td>Lanza un sub-agente (COWORK)</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="box box-tip"><strong>💡 Clave</strong>Claude elige automáticamente qué herramienta usar según tu petición. Tú solo hablas en lenguaje natural.</div>
+
+  <h2>2.2 Leer y Analizar Archivos</h2>
+  <div class="diagram">Tú:    "Lee el archivo app.py y explícame qué hace"
+
+Claude: [Usa la herramienta Read en app.py]
+
+        "app.py es una aplicación Flask que:
+         1. Define una API REST con 3 endpoints:
+            - GET /users  → devuelve lista de usuarios
+            - POST /users → crea un nuevo usuario
+         2. Usa SQLite como base de datos
+         3. Tiene validación básica de datos"</div>
+
+  <h2>2.3 Generar Código Nuevo</h2>
+  <div class="diagram">Tú:    "Crea un archivo calculadora.py con funciones
+        para sumar, restar, multiplicar y dividir"
+
+Claude: [Crea calculadora.py]
+
+        def sumar(a, b): return a + b
+        def restar(a, b): return a - b
+        def multiplicar(a, b): return a * b
+        def dividir(a, b):
+            if b == 0: raise ValueError("No se puede dividir por cero")
+            return a / b</div>
+
+  <div class="box box-info"><strong>💡 Tip</strong>Cuanto más específico seas, mejor código obtienes. Indica el lenguaje, framework, estilo de código y casos especiales.</div>
+
+  <h2>2.4 Editar Código Existente</h2>
+  <p>Claude puede modificar partes específicas sin tocar el resto, mostrando siempre un <strong>diff</strong> antes de aplicar:</p>
+  <div class="diagram">Claude muestra:
+
+- usr = User.query.get(id)      ← línea original
++ usuario = User.query.get(id)  ← línea nueva
+
+¿Quieres aplicar este cambio? [Sí / No]</div>
+
+  <h2>2.5 Debugging Asistido</h2>
+  <div class="diagram">ERROR APARECE
+     │
+     ▼
+Copias el error a Claude  (traceback completo)
+     │
+     ▼
+Claude lee los archivos relevantes
+     │
+     ▼
+Claude identifica la causa raíz
+     │
+     ▼
+Claude propone una solución
+     │
+     ▼
+Tú apruebas → Claude aplica el fix</div>
+
+  <div class="box box-warn"><strong>⚠️ Clave</strong>Comparte siempre el traceback completo. Cuanta más información tenga Claude, mejor diagnóstico hará.</div>
+
+  <h2>2.6 Comparativa: Antes vs. Con Claude Code</h2>
+  <table>
+    <tr><th>Tarea</th><th>Antes</th><th>Con Claude Code</th></tr>
+    <tr><td>Entender un archivo desconocido</td><td>~20 min</td><td><span class="tag tag-green">~30 seg</span></td></tr>
+    <tr><td>Crear tests unitarios</td><td>~1 hora</td><td><span class="tag tag-green">~1 min</span></td></tr>
+    <tr><td>Debuggear un error</td><td>~30 min</td><td><span class="tag tag-green">~2 min</span></td></tr>
+    <tr><td>Refactorizar código</td><td>~45 min</td><td><span class="tag tag-green">~1 min</span></td></tr>
+    <tr><td>Convertir a otro lenguaje</td><td>Horas</td><td><span class="tag tag-green">~2 min</span></td></tr>
+  </table>
+
+  <!-- QUIZ M2 -->
+  <div class="quiz-wrap" id="quiz-m2">
+    <h2>🎯 Autoevaluación — Módulo 2</h2>
+    <p class="quiz-intro">Demuestra que dominas las funcionalidades core.</p>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">1.</span> ¿Cuál es la diferencia entre Write y Edit?</p>
+      <div class="options" data-correct="B" data-expl="Write reemplaza todo el contenido de un archivo (o lo crea). Edit hace reemplazos quirúrgicos: cambia solo las partes especificadas sin tocar el resto. Para archivos grandes, Edit es más seguro.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Write es para Python y Edit para otros lenguajes</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Write crea/sobreescribe completo; Edit modifica partes específicas</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Write es más rápido que Edit</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) No hay diferencia</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">2.</span> ¿Qué debes incluir siempre al pedirle a Claude que debuggee un error?</p>
+      <div class="options" data-correct="C" data-expl="El traceback completo dice exactamente dónde ocurrió el error (archivo, línea, función). El contexto (qué estabas haciendo) ayuda a entender las condiciones. Sin esto, Claude tiene que adivinar.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Solo el nombre del archivo</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Tu sistema operativo y versión de Python</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) El error completo (traceback) y descripción del contexto</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) El historial completo de git</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">3.</span> ¿Cómo le pides a Claude que explique una función específica?</p>
+      <div class="options" data-correct="B" data-expl="Claude Code acepta lenguaje natural. No hay sintaxis especial. Simplemente describes lo que necesitas como si hablaras con una persona.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) read facturacion.py function calcular_iva</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Explícame qué hace la función calcular_iva en facturacion.py</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) claude --explain calcular_iva facturacion.py</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) /explain facturacion.py:calcular_iva</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">4.</span> ¿Qué muestra Claude antes de aplicar cambios a un archivo?</p>
+      <div class="options" data-correct="C" data-expl="Un diff muestra qué líneas se eliminan (con -) y qué líneas se añaden (con +). Permite revisar exactamente qué cambiará antes de aprobarlo.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Un resumen en texto de los cambios</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) El archivo completo nuevo</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Un diff (diferencias entre versión original y nueva)</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Aplica los cambios directamente sin preguntar</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">5.</span> ¿Cuál de estas peticiones es la MÁS efectiva para reportar un bug?</p>
+      <div class="options" data-correct="C" data-expl="La especificidad es clave. Cuando indicas la función exacta, el archivo, la línea y el error completo, Claude puede diagnosticar sin buscar ciegamente por todo el código.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) "Arregla el bug"</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) "El código tiene un error"</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) "En procesar_pago() en payments.py línea 78, cuando amount es 0 lanza excepción. Traceback: [...]"</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) "Revisa todos los archivos y encuentra bugs"</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="quiz-result" id="result-m2">
+      <div class="score-circle" id="score-circle-m2">0/5</div>
+      <p id="score-msg-m2" style="font-size:15px;margin-bottom:8px"></p>
+      <button class="next-btn" onclick="showSection('m3')">Módulo 3 — Avanzado →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MÓDULO 3 ==================== -->
+<section id="m3" class="section">
+  <h1 class="page-title">Módulo 3 — Características Avanzadas</h1>
+  <div class="page-meta"><span>⏱ 50 min</span><span>🔧 Avanzado</span><span>🎯 Hooks, MCP, Settings, IDE</span></div>
+
+  <h2>3.1 Hooks — Automatizaciones</h2>
+  <p>Los hooks son <strong>scripts que se ejecutan automáticamente</strong> cuando Claude hace algo — como "disparadores" o "gatillos".</p>
+  <div class="diagram">EVENTO                              HOOK
+  │                                    │
+Claude va a usar Bash  ──[PreToolUse]──→  echo "Ejecutando..."
+Claude termina Bash    ──[PostToolUse]──→ ejecuta_linter.sh
+Claude termina mensaje ──[Stop]─────────→ notifica_slack.sh</div>
+
+  <h3>Ciclo de Vida</h3>
+  <div class="flow flow-down">
+    <div class="flow-box">Usuario escribe mensaje</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box accent">PreToolUse → Hook ANTES de usar herramienta</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box">Claude usa herramienta (Read, Bash, Edit...)</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box accent">PostToolUse → Hook DESPUÉS de usar herramienta</div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box green">Stop → Hook cuando Claude TERMINA</div>
+  </div>
+
+  <h3>Configurar Hooks en settings.json</h3>
+  <pre>{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [{
+          "type": "command",
+          "command": "npm run lint"
+        }]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "echo '✅ Claude terminó'"
+        }]
+      }
+    ]
+  }
+}</pre>
+
+  <h2>3.2 Slash Commands Personalizados</h2>
+  <p>Puedes crear tus propios slash commands en <code>.claude/commands/</code>:</p>
+  <pre>.claude/
+└── commands/
+    ├── deploy.md      →  /deploy
+    ├── run-tests.md   →  /run-tests
+    └── check-style.md →  /check-style</pre>
+  <p>Ejemplo de <code>deploy.md</code>:</p>
+  <pre># Deploy a producción
+1. Ejecuta los tests: `pytest`
+2. Construye: `npm run build`
+3. Sube: `git push heroku main`
+4. Verifica: `curl https://mi-app.com/health`</pre>
+
+  <h2>3.3 MCP Servers — Claude Conectado al Mundo</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="box box-danger"><strong>Sin MCP</strong>Claude solo puede:<br>• Leer archivos locales<br>• Ejecutar comandos<br>• Buscar en internet</div>
+    <div class="box box-tip"><strong>Con MCP</strong>Claude también puede:<br>• Crear issues en GitHub<br>• Enviar mensajes en Slack<br>• Consultar bases de datos<br>• Acceder a Google Drive</div>
+  </div>
+
+  <div class="diagram">Claude Code
+    ├──[MCP]──→ GitHub MCP Server
+    │               └── create_issue, list_PRs, merge_PR...
+    │
+    ├──[MCP]──→ Slack MCP Server
+    │               └── send_message, list_channels...
+    │
+    └──[MCP]──→ Tu propio MCP Server
+                    └── herramientas personalizadas</div>
+
+  <h3>Configurar un MCP Server</h3>
+  <pre>{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_..."
+      }
+    }
+  }
+}</pre>
+
+  <h2>3.4 Settings — Configuración Completa</h2>
+  <h3>Jerarquía de Configuración</h3>
+  <div class="diagram">~/.claude/settings.json       ← GLOBAL (todos tus proyectos)
+tu-proyecto/.claude/settings.json  ← LOCAL (solo este proyecto)
+
+El archivo LOCAL tiene prioridad sobre el GLOBAL.</div>
+
+  <h3>Sistema de Permisos</h3>
+  <pre>{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",    // solo comandos npm run
+      "Bash(git *)",        // todos los comandos git
+      "Read(**)",           // leer cualquier archivo
+      "Write(src/**)"       // escribir solo en src/
+    ],
+    "deny": [
+      "Bash(rm -rf *)",     // NUNCA borrar recursivo
+      "Bash(sudo *)"        // NUNCA sudo
+    ]
+  }
+}</pre>
+
+  <h2>3.5 Integración con IDEs</h2>
+  <table>
+    <tr><th>IDE</th><th>Cómo instalar</th><th>Ventaja principal</th></tr>
+    <tr><td><strong>VS Code</strong></td><td>Extensions → busca "Claude Code"</td><td>Panel integrado en el editor</td></tr>
+    <tr><td><strong>JetBrains</strong></td><td>File → Settings → Plugins</td><td>Clic derecho → "Ask Claude"</td></tr>
+  </table>
+
+  <!-- QUIZ M3 -->
+  <div class="quiz-wrap" id="quiz-m3">
+    <h2>🎯 Autoevaluación — Módulo 3</h2>
+    <p class="quiz-intro">Demuestra que dominas las características avanzadas.</p>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">1.</span> ¿Qué hace un hook PostToolUse configurado para Edit?</p>
+      <div class="options" data-correct="B" data-expl="PostToolUse significa 'después de usar la herramienta'. Es el momento ideal para ejecutar validaciones, linters, o registrar cambios. El hook recibe información sobre qué herramienta se usó.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Se ejecuta antes de que Claude edite un archivo</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Se ejecuta después de que Claude edite un archivo</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Previene que Claude edite archivos</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Registra qué archivos están disponibles para editar</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">2.</span> ¿Para qué sirven los MCP Servers?</p>
+      <div class="options" data-correct="B" data-expl="MCP (Model Context Protocol) es el puente entre Claude y servicios externos. Sin MCP, Claude solo trabaja con archivos locales y comandos. Con MCP puede interactuar con GitHub, Slack, Drive, bases de datos y cualquier API.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Para acelerar las respuestas de Claude</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Para conectar Claude con servicios externos como GitHub, Slack o bases de datos</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Para guardar el historial de conversaciones</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Para instalar plugins de Claude Code</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">3.</span> Tienes settings.json global y local. ¿Cuál tiene prioridad?</p>
+      <div class="options" data-correct="B" data-expl="El local sobreescribe al global cuando hay conflicto. Esto permite tener configuración general en ~/.claude/settings.json y sobreescribir solo lo específico en cada proyecto.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) El global (~/.claude/settings.json) siempre tiene prioridad</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) El local (.claude/settings.json del proyecto) tiene prioridad</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Se mezclan con igual prioridad</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) El editado más recientemente tiene prioridad</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">4.</span> ¿Cómo creas un slash command /deploy personalizado?</p>
+      <div class="options" data-correct="C" data-expl="Los slash commands personalizados son archivos Markdown en .claude/commands/. El nombre del archivo (sin .md) se convierte en el comando. El contenido es el prompt que Claude ejecutará.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Escribiendo /define deploy dentro de Claude Code</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Añadiéndolo a la sección "commands" del settings.json</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Creando el archivo .claude/commands/deploy.md</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Ejecutando claude --register-command deploy</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">5.</span> ¿Qué patrón permite npm install y npm run build pero NO npm publish?</p>
+      <div class="options" data-correct="B" data-expl="'Bash(npm *)' permitiría CUALQUIER comando npm incluyendo publish. 'Bash(npm install)', 'Bash(npm run *)' permite exactamente esos dos patrones, excluyendo npm publish, npm unpublish, etc.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) "Bash(npm *)"</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) "Bash(npm install)", "Bash(npm run *)"</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) "Bash(npm install *)", "Bash(npm run build)"</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) "Bash(npm)", "deny": ["Bash(npm publish)"]</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="quiz-result" id="result-m3">
+      <div class="score-circle" id="score-circle-m3">0/5</div>
+      <p id="score-msg-m3" style="font-size:15px;margin-bottom:8px"></p>
+      <button class="next-btn" onclick="showSection('m4')">Módulo 4 — COWORK →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MÓDULO 4 ==================== -->
+<section id="m4" class="section">
+  <h1 class="page-title">Módulo 4 — COWORK Multi-Agente</h1>
+  <div class="page-meta"><span>⏱ 60 min</span><span>🤖 Avanzado</span><span>🎯 Orquestación de agentes</span></div>
+
+  <h2>4.1 ¿Qué es un Agente?</h2>
+  <p>Un <strong>agente</strong> es una instancia de Claude que puede recibir una tarea, planificar los pasos, usar herramientas y devolver un resultado.</p>
+  <div class="diagram">┌────────────────────────────────────────┐
+│                AGENTE                  │
+│                                        │
+│  Entrada: "Encuentra bugs de seguridad │
+│            en src/"                    │
+│                │                       │
+│                ▼                       │
+│  Planifica:                            │
+│    1. Listar archivos en src/          │
+│    2. Leer cada archivo                │
+│    3. Buscar patrones inseguros        │
+│    4. Reportar hallazgos              │
+│                │                       │
+│                ▼                       │
+│  Ejecuta: Read, Bash, WebSearch        │
+│                │                       │
+│                ▼                       │
+│  Salida: "Encontré 3 vulnerabilidades" │
+└────────────────────────────────────────┘</div>
+
+  <h2>4.2 Tipos de Agentes</h2>
+  <table>
+    <tr><th>Tipo</th><th>Especialidad</th><th>Cuándo usarlo</th></tr>
+    <tr><td><code>Explore</code></td><td>Búsqueda en el codebase</td><td>Encontrar archivos, funciones, patrones</td></tr>
+    <tr><td><code>Plan</code></td><td>Diseño de arquitectura</td><td>Planificar soluciones complejas</td></tr>
+    <tr><td><code>general-purpose</code></td><td>Tareas multi-paso</td><td>Investigación y ejecución compleja</td></tr>
+    <tr><td><code>claude-code-guide</code></td><td>Preguntas sobre Claude Code</td><td>Dudas sobre la herramienta misma</td></tr>
+  </table>
+
+  <h2>4.3 Patrón Secuencial vs. Paralelo</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div>
+      <h3>Secuencial</h3>
+      <div class="diagram">Cuándo: B necesita el resultado de A
+
+[Agente A: Explorar código]
+        │
+        │ resultado
+        ▼
+[Agente B: Planificar migración]
+(necesita saber la estructura)
+        │
+        │ plan
+        ▼
+[Agente C: Implementar]
+
+Tiempo = A + B + C</div>
+    </div>
+    <div>
+      <h3>Paralelo</h3>
+      <div class="diagram">Cuándo: A, B y C son independientes
+
+         [Orquestador]
+              │
+   ┌──────────┼──────────┐
+   ▼          ▼          ▼
+[Ag. A]   [Ag. B]   [Ag. C]
+ auth/      api/       db/
+
+Todos corren simultáneamente
+
+Tiempo = max(A, B, C)</div>
+    </div>
+  </div>
+
+  <h2>4.4 ¿Cuándo Usar COWORK?</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="box box-info"><strong>Un Solo Agente cuando:</strong>
+      • Tarea puntual y acotada<br>
+      • El contexto cabe en una conversación<br>
+      • No hay tareas independientes<br>
+      • Es más rápido explicarlo directamente
+    </div>
+    <div class="box box-tip"><strong>COWORK cuando:</strong>
+      • Analizar 200+ archivos<br>
+      • Sub-tareas independientes → paralelizar<br>
+      • Necesitas perspectivas especializadas<br>
+      • Tarea con muchos pasos complejos
+    </div>
+  </div>
+  <div class="box box-warn"><strong>⚠️ Cuidado</strong>No uses COWORK para todo. Añadir sub-agentes tiene coste: más tiempo de coordinación y más tokens. Para tareas simples, un solo agente es más eficiente.</div>
+
+  <h2>4.5 Cómo Crear Sub-Agentes</h2>
+  <pre>// SECUENCIAL — esperar resultado antes de continuar
+const resultado = Agent({
+  description: "Explorar estructura del proyecto",
+  subagent_type: "Explore",
+  prompt: "Mapea la estructura completa de src/",
+  run_in_background: false  // esperar a que termine
+})
+
+// PARALELO — todos al mismo tiempo
+Agent({
+  description: "Analizar módulo auth",
+  subagent_type: "Explore",
+  prompt: "Analiza src/auth/ y reporta issues de seguridad",
+  run_in_background: true   // no esperar, ejecutar en paralelo
+})
+
+Agent({
+  description: "Analizar módulo api",
+  subagent_type: "Explore",
+  prompt: "Analiza src/api/ y reporta issues de seguridad",
+  run_in_background: true
+})
+// Los dos corren simultáneamente</pre>
+
+  <h2>4.6 Comunicación entre Agentes</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="box box-tip"><strong>✅ Correcto</strong>Sub-agentes se comunican A TRAVÉS del orquestador. Cada uno reporta sus resultados al orquestador que los integra.</div>
+    <div class="box box-danger"><strong>❌ Incorrecto</strong>Sub-agentes NO se hablan directamente. No hay canal entre ellos. El orquestador es siempre el intermediario.</div>
+  </div>
+
+  <!-- QUIZ M4 -->
+  <div class="quiz-wrap" id="quiz-m4">
+    <h2>🎯 Autoevaluación — Módulo 4</h2>
+    <p class="quiz-intro">Demuestra que dominas COWORK y la orquestación multi-agente.</p>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">1.</span> ¿Qué es el "orquestador" en COWORK?</p>
+      <div class="options" data-correct="B" data-expl="El orquestador es el agente principal que recibe la tarea del usuario, la divide en sub-tareas, las asigna a sub-agentes apropiados, recoge sus resultados y produce la respuesta final integrada.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Un servidor que ejecuta los agentes en la nube</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) El agente principal que divide y coordina el trabajo de los sub-agentes</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Un tipo especial de sub-agente para músicos</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) El protocolo de comunicación entre agentes</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">2.</span> Tienes que analizar 3 módulos independientes (auth, api, db). ¿Qué patrón es más eficiente?</p>
+      <div class="options" data-correct="B" data-expl="Si los 3 módulos son independientes, lo más eficiente es ejecutarlos en paralelo. El tiempo total será el del más lento, no la suma de los tres. Con secuencial pagarías innecesariamente A+B+C.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Secuencial: analizar auth, luego api, luego db</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Paralelo: lanzar los 3 análisis simultáneamente</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Híbrido: auth primero, luego api y db juntos</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) No importa, ambos tardan lo mismo</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">3.</span> Un sub-agente lanzado con run_in_background: true, ¿hereda el contexto de la conversación?</p>
+      <div class="options" data-correct="B" data-expl="Los sub-agentes son instancias nuevas e independientes. NO heredan el contexto de la conversación del orquestador. Por eso, el prompt debe ser auto-contenido e incluir toda la información necesaria.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Sí, hereda todo el contexto del orquestador</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) No, solo ve lo que le describes en su prompt</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Solo si usas el mismo modelo (Sonnet, Opus, etc.)</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Depende si está en modo aislado</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">4.</span> ¿Cuál situación justifica usar COWORK en lugar de un solo agente?</p>
+      <div class="options" data-correct="C" data-expl="Con 500 archivos, un solo agente no puede mantener todo ese contexto. Con COWORK, divides los archivos entre sub-agentes que trabajan en paralelo. Las otras opciones son tareas pequeñas perfectamente manejables por un solo agente.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Corregir un typo en un comentario</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) Refactorizar una función de 20 líneas</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Auditar 500 archivos para encontrar vulnerabilidades</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Crear un archivo README sencillo</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="q-block">
+      <p class="q-text"><span class="q-num">5.</span> ¿Cómo se comunican los sub-agentes entre sí?</p>
+      <div class="options" data-correct="B" data-expl="Los sub-agentes no tienen canales directos. Cada sub-agente reporta al orquestador, y si un sub-agente B necesita información del A, el orquestador se la pasa al crear el prompt de B.">
+        <button class="opt-btn" data-val="A"><span class="opt-icon">🔘</span>A) Directamente mediante un canal de mensajes compartido</button>
+        <button class="opt-btn" data-val="B"><span class="opt-icon">🔘</span>B) A través del orquestador, que actúa de intermediario</button>
+        <button class="opt-btn" data-val="C"><span class="opt-icon">🔘</span>C) Usando un archivo compartido en disco</button>
+        <button class="opt-btn" data-val="D"><span class="opt-icon">🔘</span>D) Los sub-agentes no pueden comunicarse en absoluto</button>
+      </div>
+      <div class="explanation"></div>
+    </div>
+
+    <div class="quiz-result" id="result-m4">
+      <div class="score-circle" id="score-circle-m4">0/5</div>
+      <p id="score-msg-m4" style="font-size:15px;margin-bottom:8px"></p>
+      <button class="next-btn" onclick="showSection('m5')">Módulo 5 — Proyecto Final →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== MÓDULO 5 ==================== -->
+<section id="m5" class="section">
+  <h1 class="page-title">Módulo 5 — Proyecto Final</h1>
+  <div class="page-meta"><span>⏱ 90 min</span><span>🏆 Integrador</span><span>🎯 Code Reviewer con COWORK</span></div>
+
+  <div class="box box-tip"><strong>🎯 Objetivo</strong>Construir un sistema de revisión de código automático que analiza un repositorio, detecta problemas y genera un informe. Usa todo lo aprendido: Claude Code + COWORK + Hooks + Settings.</div>
+
+  <h2>5.1 Visión General del Proyecto</h2>
+  <div class="diagram">┌───────────────────────────────────────────────────────┐
+│         SISTEMA DE CODE REVIEW AUTOMÁTICO             │
+│                                                       │
+│  INPUT:   Un directorio con código Python             │
+│                                                       │
+│  PROCESO: COWORK multi-agente                         │
+│    ├── Agente 1: Análisis de seguridad                │
+│    ├── Agente 2: Calidad del código                   │
+│    ├── Agente 3: Tests faltantes                      │
+│    └── Agente 4: Documentación                        │
+│                                                       │
+│  OUTPUT:  report.md con hallazgos y fixes aplicados   │
+└───────────────────────────────────────────────────────┘</div>
+
+  <h2>5.2 Fase 1 — Preparación</h2>
+  <pre># Crea el directorio del proyecto
+mkdir mi-code-reviewer
+cd mi-code-reviewer
+
+# Inicia Claude Code
+claude</pre>
+
+  <p>Dentro de Claude Code, pide:</p>
+  <div class="box box-info"><strong>Prompt sugerido</strong><em>"Crea la estructura inicial del proyecto: un directorio proyecto-ejemplo/ con 3 archivos Python con código intencionalmente imperfecto (bugs de seguridad, falta de tests, código sin documentar), más CLAUDE.md y .claude/settings.json con permisos para leer todo y escribir en *.md y proyecto-ejemplo/**"</em></div>
+
+  <h2>5.3 Fase 2 — settings.json del Proyecto</h2>
+  <pre>{
+  "permissions": {
+    "allow": [
+      "Bash(find *)", "Bash(grep *)",
+      "Bash(python *)", "Bash(pytest *)",
+      "Read(**)",
+      "Write(*.md)", "Write(proyecto-ejemplo/**)"
+    ]
+  },
+  "env": { "PYTHONPATH": ".", "REVIEW_OUTPUT": "report.md" },
+  "hooks": {
+    "Stop": [{
+      "hooks": [{
+        "type": "command",
+        "command": "echo '✅ Revisión completada. Consulta report.md'"
+      }]
+    }]
+  }
+}</pre>
+
+  <h2>5.4 Fase 3 — Código con Problemas Intencionales</h2>
+  <p>El código de ejemplo tendrá estos problemas deliberados:</p>
+  <table>
+    <tr><th>Archivo</th><th>Problema</th><th>Severidad</th></tr>
+    <tr><td>auth.py</td><td>SQL Injection con f-strings</td><td><span class="tag tag-red">CRÍTICO</span></td></tr>
+    <tr><td>auth.py</td><td>Hashing débil (MD5)</td><td><span class="tag tag-red">CRÍTICO</span></td></tr>
+    <tr><td>auth.py</td><td>Sin control de acceso</td><td><span class="tag tag-red">CRÍTICO</span></td></tr>
+    <tr><td>processing.py</td><td>Nombres crípticos (p, d, t)</td><td><span class="tag tag-yellow">MEDIO</span></td></tr>
+    <tr><td>processing.py</td><td>Magic numbers sin constante</td><td><span class="tag tag-yellow">MEDIO</span></td></tr>
+    <tr><td>processing.py</td><td>Except genérico</td><td><span class="tag tag-yellow">MEDIO</span></td></tr>
+    <tr><td>api.py</td><td>Sin validación de entrada</td><td><span class="tag tag-blue">ALTO</span></td></tr>
+    <tr><td>api.py</td><td>Sin documentación de endpoints</td><td><span class="tag tag-green">BAJO</span></td></tr>
+  </table>
+
+  <h2>5.5 Fase 4 — Lanzar la Revisión COWORK</h2>
+  <div class="box box-info"><strong>Prompt maestro para Claude</strong><em>"Lanza una revisión completa con COWORK de proyecto-ejemplo/. Usa agentes Explore en PARALELO para: (1) vulnerabilidades de seguridad, (2) calidad del código (nombres, complejidad, docstrings), (3) tests faltantes, (4) manejo de errores. Al final combina todos los hallazgos en report.md con tabla resumen y recomendaciones por severidad."</em></div>
+
+  <h2>5.6 Checklist de Completitud</h2>
+  <div class="box box-tip">
+    <strong>✅ Marca cada tarea al completarla</strong><br><br>
+    <strong>Preparación:</strong><br>
+    ▢ Directorio creado con código de ejemplo<br>
+    ▢ CLAUDE.md configurado<br>
+    ▢ settings.json con permisos correctos<br><br>
+    <strong>Ejecución COWORK:</strong><br>
+    ▢ 4 sub-agentes lanzados en paralelo<br>
+    ▢ report.md generado<br><br>
+    <strong>Fixes:</strong><br>
+    ▢ SQL Injection corregido<br>
+    ▢ MD5 reemplazado por bcrypt<br>
+    ▢ Type hints y docstrings añadidos<br>
+    ▢ Validación de entrada implementada
+  </div>
+
+  <h2>5.7 Habilidades Aplicadas</h2>
+  <table>
+    <tr><th>Módulo</th><th>Habilidad Aplicada</th></tr>
+    <tr><td>M1</td><td>Iniciar Claude Code, crear CLAUDE.md</td></tr>
+    <tr><td>M2</td><td>Leer/analizar archivos, editar código, debuggear</td></tr>
+    <tr><td>M3</td><td>Configurar settings.json, usar hooks</td></tr>
+    <tr><td>M4</td><td>Orquestar agentes en paralelo, combinar resultados</td></tr>
+  </table>
+
+  <div class="quiz-result show" id="result-m5" style="display:block!important;border-top:none;padding-top:0">
+    <div style="text-align:center;padding:24px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-top:24px">
+      <div style="font-size:48px;margin-bottom:12px">🏆</div>
+      <h3 style="font-size:20px;color:var(--accent2);margin-bottom:8px">¡Proyecto Final Completado!</h3>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:16px">Has completado el curso completo de Claude Code &amp; COWORK.<br>Marca este módulo como completado para ver tu progreso final.</p>
+      <button class="next-btn" onclick="completeModule('m5');showSection('home')">✅ Marcar como completado</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== GLOSARIO ==================== -->
+<section id="glosario" class="section">
+  <h1 class="page-title">📖 Glosario</h1>
+  <p class="page-meta"><span>Todos los términos técnicos del curso, explicados en lenguaje sencillo.</span></p>
+
+  <div id="glosario-search" style="margin-bottom:20px">
+    <input type="text" id="glosario-input" placeholder="Buscar término..." oninput="filterGlosario()" style="width:100%;padding:10px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none">
+  </div>
+
+  <div id="glosario-list">
+    <h2>A</h2>
+    <h3>Agent (Agente)</h3><p>Instancia de Claude que puede recibir una tarea, planificar pasos, usar herramientas y devolver resultados. Base de COWORK.</p>
+    <h3>Agent SDK</h3><p>Kit de desarrollo para construir y orquestar agentes de IA. Claude Code lo usa para COWORK.</p>
+    <h3>API (Application Programming Interface)</h3><p>Interfaz que permite que dos programas se comuniquen. La API de Anthropic es la "puerta" para hablar con Claude.</p>
+    <h3>API Key</h3><p>Contraseña secreta que identifica tu cuenta al usar la API. Empieza con <code>sk-ant-</code>. Nunca la compartas.</p>
+
+    <h2>C</h2>
+    <h3>CLI (Command Line Interface)</h3><p>Interfaz de línea de comandos — se usa escribiendo texto en la terminal. Claude Code es un CLI.</p>
+    <h3>Claude Code</h3><p>CLI oficial de Anthropic para interactuar con Claude desde la terminal para tareas de desarrollo de software.</p>
+    <h3>COWORK</h3><p>Modelo de trabajo donde múltiples agentes Claude trabajan juntos. Un orquestador delega sub-tareas a agentes especializados.</p>
+    <h3>Contexto</h3><p>Información que Claude tiene disponible: mensajes anteriores, archivos leídos, historial de herramientas usadas.</p>
+
+    <h2>D</h2>
+    <h3>Diff</h3><p>Diferencia entre dos versiones de un archivo. Claude muestra diffs al editar código para que veas exactamente qué cambia.</p>
+
+    <h2>H</h2>
+    <h3>Hook</h3><p>Script que se ejecuta automáticamente cuando ocurre un evento en Claude Code (PreToolUse, PostToolUse, Stop, Notification).</p>
+
+    <h2>M</h2>
+    <h3>MCP (Model Context Protocol)</h3><p>Protocolo estándar que permite a Claude conectarse con servicios externos (GitHub, Slack, bases de datos, etc.).</p>
+    <h3>MCP Server</h3><p>Programa que implementa MCP y expone herramientas de un servicio externo a Claude.</p>
+
+    <h2>O</h2>
+    <h3>Orquestador</h3><p>Agente principal en COWORK que divide tareas y coordina a los sub-agentes.</p>
+
+    <h2>S</h2>
+    <h3>Settings (settings.json)</h3><p>Archivo de configuración de Claude Code: permisos, hooks, MCP servers, variables de entorno.</p>
+    <h3>Slash Command</h3><p>Comando especial dentro de Claude Code que empieza con <code>/</code>. Ejemplo: <code>/help</code>, <code>/compact</code>.</p>
+    <h3>Sub-Agente</h3><p>Agente secundario creado por el orquestador para realizar una tarea específica e independiente.</p>
+
+    <h2>T</h2>
+    <h3>Tool (Herramienta)</h3><p>Capacidad específica de Claude: Read, Write, Edit, Bash, WebSearch, Agent, etc.</p>
+    <h3>Token</h3><p>Unidad básica de texto que procesa el LLM. ~1 token = 0.75 palabras. Los modelos tienen límites de tokens.</p>
+
+    <h2>W</h2>
+    <h3>Worktree</h3><p>Copia aislada de un repositorio Git donde un sub-agente puede trabajar sin interferir con el orquestador.</p>
+  </div>
+</section>
+
+<!-- ==================== CHEATSHEET ==================== -->
+<section id="cheatsheet" class="section">
+  <h1 class="page-title">⚡ Cheatsheet</h1>
+  <p class="page-meta"><span>Referencia rápida de todo lo aprendido en el curso.</span></p>
+
+  <div class="cheat-grid">
+    <div class="cheat-card">
+      <h3>Instalación</h3>
+      <pre>npm install -g @anthropic-ai/claude-code
+export ANTHROPIC_API_KEY="sk-ant-..."
+claude --version
+claude</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Slash Commands</h3>
+      <pre>/help      → ayuda
+/clear     → limpiar pantalla
+/compact   → comprimir contexto
+/status    → estado del modelo
+/init      → crear CLAUDE.md
+/review    → revisión COWORK
+/fast      → modo rápido</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Herramientas</h3>
+      <pre>Read       → leer archivo
+Write      → crear/sobreescribir
+Edit       → editar partes
+Bash       → ejecutar comando
+WebSearch  → buscar en internet
+Agent      → sub-agente COWORK</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Hooks — Eventos</h3>
+      <pre>PreToolUse   → antes herramienta
+PostToolUse  → después herramienta
+Stop         → Claude terminó
+Notification → Claude notifica</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Permisos</h3>
+      <pre>"allow": [
+  "Bash(npm run *)",
+  "Bash(git *)",
+  "Read(**)",
+  "Write(src/**)"
+],
+"deny": ["Bash(rm -rf *)"]</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Agentes COWORK</h3>
+      <pre>Explore      → buscar código
+Plan         → diseñar solución
+general-purpose → tareas complejas
+claude-code-guide → preguntas SDK</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Patrones COWORK</h3>
+      <pre>Secuencial:
+[A]→[B]→[C]  Tiempo = A+B+C
+
+Paralelo (run_in_background: true):
+[A][B][C] simultáneo
+Tiempo = max(A, B, C)</pre>
+    </div>
+    <div class="cheat-card">
+      <h3>Modelos Claude</h3>
+      <pre>claude-opus-4-7   → máxima capacidad
+claude-sonnet-4-6 → uso general
+claude-haiku-4-5  → rapidez</pre>
+    </div>
+  </div>
+
+  <h2>Archivos de Configuración</h2>
+  <div class="diagram">Tu proyecto/
+├── CLAUDE.md                ← contexto permanente del proyecto
+└── .claude/
+    ├── settings.json        ← configuración local (prioridad)
+    └── commands/            ← slash commands personalizados
+        └── mi-comando.md    →  /mi-comando
+
+~/.claude/
+└── settings.json            ← configuración global</div>
+
+  <div class="box box-tip"><strong>💡 Tips de Oro</strong>
+    ✅ Sé específico en tus instrucciones → mejores resultados<br>
+    ✅ Usa CLAUDE.md para dar contexto permanente del proyecto<br>
+    ✅ /compact cuando la sesión se vuelve lenta<br>
+    ✅ Usa sub-agentes para tareas grandes e independientes<br>
+    ⚠️ Nunca pongas tu API key en archivos que irán a git<br>
+    ⚠️ Revisa siempre los diffs antes de aprobar cambios
+  </div>
+</section>
+
+</main>
+
+<script>
+// ==================== STATE ====================
+const MODULES = ['m0','m1','m2','m3','m4','m5'];
+let progress = JSON.parse(localStorage.getItem('claude-course-progress') || '{}');
+
+// ==================== NAVIGATION ====================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('#nav-list a').forEach(a => a.classList.remove('active'));
+  const sec = document.getElementById(id);
+  if (sec) { sec.classList.add('active'); sec.scrollIntoView({behavior:'instant',block:'start'}); }
+  document.querySelectorAll(`#nav-list a[onclick*="${id}"]`).forEach(a => a.classList.add('active'));
+  window.scrollTo(0,0);
+  // close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ==================== QUIZ ENGINE ====================
+document.querySelectorAll('.options').forEach(optGroup => {
+  const correct = optGroup.dataset.correct;
+  const expl = optGroup.dataset.expl;
+  const explDiv = optGroup.nextElementSibling;
+
+  optGroup.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      if (optGroup.dataset.answered) return;
+      optGroup.dataset.answered = 'true';
+      const val = this.dataset.val;
+      optGroup.querySelectorAll('.opt-btn').forEach(b => {
+        b.disabled = true;
+        if (b.dataset.val === correct) {
+          b.classList.add('correct');
+          b.querySelector('.opt-icon').textContent = '✅';
+        }
+        if (b.dataset.val === val && val !== correct) {
+          b.classList.add('wrong');
+          b.querySelector('.opt-icon').textContent = '❌';
+        }
+      });
+      explDiv.textContent = (val === correct ? '✅ Correcto. ' : '❌ Incorrecto. ') + expl;
+      explDiv.classList.add('show');
+      checkQuizComplete(optGroup.closest('.quiz-wrap'));
+    });
+  });
+});
+
+function checkQuizComplete(quizWrap) {
+  const allGroups = quizWrap.querySelectorAll('.options');
+  const answered = quizWrap.querySelectorAll('.options[data-answered]').length;
+  if (answered < allGroups.length) return;
+
+  const correct = quizWrap.querySelectorAll('.opt-btn.correct').length;
+  const total = allGroups.length;
+  const moduleId = quizWrap.id.replace('quiz-','');
+  const resultDiv = document.getElementById('result-'+moduleId);
+  const circle = document.getElementById('score-circle-'+moduleId);
+  const msg = document.getElementById('score-msg-'+moduleId);
+
+  circle.textContent = correct+'/'+total;
+  const pass = correct >= 4;
+  circle.className = 'score-circle ' + (pass ? 'pass' : 'fail');
+
+  const msgs = ['🔄 Vuelve a leer la lección antes de continuar.','⚠️ Repasa las secciones más difíciles.','📖 Bien, pero revisa los errores antes de avanzar.','👍 Muy bien, puedes continuar al siguiente módulo.','🏆 ¡Perfecto! Dominas este módulo completamente.'];
+  msg.textContent = msgs[correct];
+
+  resultDiv.classList.add('show');
+  if (pass) {
+    progress[moduleId] = { score: correct, passed: true };
+    localStorage.setItem('claude-course-progress', JSON.stringify(progress));
+    updateProgressUI();
+    document.getElementById('b-'+moduleId).textContent = correct+'/5';
+    document.getElementById('b-'+moduleId).classList.replace('todo','done');
+  }
+}
+
+function completeModule(moduleId) {
+  progress[moduleId] = { score: 5, passed: true };
+  localStorage.setItem('claude-course-progress', JSON.stringify(progress));
+  updateProgressUI();
+  const badge = document.getElementById('b-'+moduleId);
+  if (badge) { badge.textContent = '✓'; badge.classList.replace('todo','done'); }
+}
+
+// ==================== PROGRESS UI ====================
+function updateProgressUI() {
+  const done = MODULES.filter(m => progress[m] && progress[m].passed).length;
+  const pct = Math.round((done / MODULES.length) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('modules-done').textContent = done + '/' + MODULES.length;
+  document.getElementById('progress-label').textContent =
+    done === MODULES.length ? '¡Curso completado! 🏆' :
+    done === 0 ? 'Empieza con el Módulo 0' :
+    `Módulo ${done} completado`;
+
+  MODULES.forEach(m => {
+    const dot = document.getElementById('dot-'+m);
+    if (!dot) return;
+    if (progress[m] && progress[m].passed) {
+      dot.style.background = 'var(--success)';
+    } else if (m === 'm'+done) {
+      dot.style.background = 'var(--accent3)';
+    }
+    const badge = document.getElementById('b-'+m);
+    if (badge && progress[m] && progress[m].passed) {
+      badge.textContent = (progress[m].score || '✓') + '/5';
+      badge.classList.replace('todo','done');
+    }
+  });
+}
+
+function resetProgress() {
+  if (!confirm('¿Seguro que quieres reiniciar todo el progreso?')) return;
+  localStorage.removeItem('claude-course-progress');
+  progress = {};
+  location.reload();
+}
+
+// ==================== GLOSARIO SEARCH ====================
+function filterGlosario() {
+  const q = document.getElementById('glosario-input').value.toLowerCase();
+  document.querySelectorAll('#glosario-list h3, #glosario-list p').forEach(el => {
+    if (el.tagName === 'H3') {
+      const next = el.nextElementSibling;
+      const match = el.textContent.toLowerCase().includes(q) ||
+                    (next && next.textContent.toLowerCase().includes(q));
+      el.style.display = match || q === '' ? '' : 'none';
+      if (next) next.style.display = match || q === '' ? '' : 'none';
+    }
+  });
+  document.querySelectorAll('#glosario-list h2').forEach(h2 => {
+    let hasVisible = false;
+    let sib = h2.nextElementSibling;
+    while (sib && sib.tagName !== 'H2') {
+      if (sib.style.display !== 'none') hasVisible = true;
+      sib = sib.nextElementSibling;
+    }
+    h2.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+// ==================== INIT ====================
+updateProgressUI();
+</script>
+</body>
+</html>
