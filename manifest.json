@@ -1,0 +1,25 @@
+{
+  "name": "Claude Code & COWORK",
+  "short_name": "ClaudeCode",
+  "description": "Guía interactiva paso a paso: Claude Code y colaboración multi-agente",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='115' fill='%23000'/><rect width='512' height='512' rx='115' fill='url(%23g)' opacity='.6'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%230A84FF'/><stop offset='1' stop-color='%2330D158'/></linearGradient></defs><text x='256' y='330' text-anchor='middle' font-size='280' font-family='system-ui'>🤖</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    { "name": "Módulo 0", "url": "./index.html#m0", "description": "Introducción" },
+    { "name": "Módulo 4", "url": "./index.html#m4", "description": "COWORK Multi-Agente" },
+    { "name": "Cheatsheet", "url": "./index.html#cheatsheet", "description": "Referencia rápida" }
+  ]
+}
